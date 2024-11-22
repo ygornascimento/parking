@@ -4,6 +4,7 @@ import com.mballem.demoparkapi.entity.Usuario;
 import com.mballem.demoparkapi.service.UsuarioService;
 import com.mballem.demoparkapi.web.dto.UsuarioCreateDTO;
 import com.mballem.demoparkapi.web.dto.UsuarioResponseDTO;
+import com.mballem.demoparkapi.web.dto.UsuarioSenhaDTO;
 import com.mballem.demoparkapi.web.dto.mapper.UsuarioMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,9 +32,9 @@ public class UsuarioController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Usuario> updatePassword(@PathVariable Long id, @RequestBody Usuario usuario) {
-        Usuario user = usuarioService.editarSenha(id, usuario.getPassword());
-        return ResponseEntity.ok(user);
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UsuarioSenhaDTO dto) {
+        Usuario user = usuarioService.editarSenha(id, dto.getSenhaAtual(), dto.getNovaSenha(), dto.getConfirmarSenha());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
