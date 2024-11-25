@@ -94,6 +94,20 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
+
+    @Operation(summary = "Recupera todos os usuários.",
+            description = "Recupera todos os usuários.",
+            responses = {
+                    @ApiResponse(responseCode = "200",
+                            description = "Usuários recuperados com sucesso.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UsuarioResponseDTO.class))),
+                    @ApiResponse(responseCode = "404",
+                            description = "Usuários não encontrados.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            }
+    )
     @GetMapping
     public ResponseEntity<List<UsuarioResponseDTO>> getAll() {
         List<Usuario> users = usuarioService.buscarTodos();
