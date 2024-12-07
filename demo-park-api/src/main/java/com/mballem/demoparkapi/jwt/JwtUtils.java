@@ -22,9 +22,7 @@ public class JwtUtils {
     public static final long EXPIRE_HOURS = 0;
     public static final long EXPIRE_MINUTES = 2;
 
-    private JwtUtils() {
-
-    }
+    private JwtUtils() {}
 
     private static Key generateKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
@@ -61,7 +59,7 @@ public class JwtUtils {
         Date limit = generateExpirationDate(issuedAt);
 
         String token = Jwts.builder()
-                .setHeaderParam("type", "JWT")
+                .setHeaderParam("typ", "JWT")
                 .setSubject(username)
                 .setIssuedAt(issuedAt)
                 .setExpiration(limit)
