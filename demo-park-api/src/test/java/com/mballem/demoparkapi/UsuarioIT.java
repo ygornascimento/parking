@@ -144,7 +144,7 @@ public class UsuarioIT {
     }
 
     @Test
-    public void createUsuario_ComIdExistente_RetornarUsuario_ComStatus200() {
+    public void buscarUsuario_ComIdExistente_RetornarUsuario_ComStatus200() {
         UsuarioResponseDTO responseBody = webTestClient
                 .get()
                 .uri("/api/v1/usuarios/100")
