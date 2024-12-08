@@ -222,7 +222,17 @@ public class UsuarioIT {
     public void editarSenha_ComDadosValidos_RetornarUsuarioCriado_ComStatus204() {
         webTestClient
                 .patch()
+                .uri("/api/v1/usuarios/100")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioSenhaDTO("123456", "101010", "101010"))
+                .exchange()
+                .expectStatus().isNoContent();
+
+        webTestClient
+                .patch()
                 .uri("/api/v1/usuarios/101")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test2@mail.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("123456", "101010", "101010"))
                 .exchange()
@@ -230,19 +240,34 @@ public class UsuarioIT {
     }
 
     @Test
-    public void editarSenha_ComIdInexistente_RetornarErrorMessage_ComStatus404() {
+    public void editarSenha_ComUsuariosDiferentes_RetornarErrorMessage_ComStatus403() {
         ErrorMessage responseBody = webTestClient
                 .patch()
-                .uri("/api/v1/usuarios/1101")
+                .uri("/api/v1/usuarios/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("123456", "101010", "101010"))
                 .exchange()
-                .expectStatus().isNotFound()
+                .expectStatus().isForbidden()
                 .expectBody(ErrorMessage.class)
                 .returnResult().getResponseBody();
 
         assertThat(responseBody).isNotNull();
-        assertThat(responseBody.getStatus()).isEqualTo(404);
+        assertThat(responseBody.getStatus()).isEqualTo(403);
+
+        responseBody = webTestClient
+                .patch()
+                .uri("/api/v1/usuarios/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test2@mail.com", "123456"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioSenhaDTO("123456", "101010", "101010"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatus()).isEqualTo(403);
     }
 
     @Test
