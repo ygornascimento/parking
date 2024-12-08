@@ -275,6 +275,7 @@ public class UsuarioIT {
         ErrorMessage responseBody = webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/101")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("", "", ""))
                 .exchange()
@@ -288,6 +289,7 @@ public class UsuarioIT {
         responseBody = webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/101")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("12345", "12345", "12345"))
                 .exchange()
@@ -301,6 +303,7 @@ public class UsuarioIT {
         responseBody = webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/101")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("1234567", "1234567", "1234567"))
                 .exchange()
@@ -316,7 +319,8 @@ public class UsuarioIT {
     public void editarSenha_ComSenhasInvalidas_RetornarErrorMessage_ComStatus400() {
         ErrorMessage responseBody = webTestClient
                 .patch()
-                .uri("/api/v1/usuarios/101")
+                .uri("/api/v1/usuarios/100")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("123456", "123456", "000000"))
                 .exchange()
@@ -329,7 +333,8 @@ public class UsuarioIT {
 
         responseBody = webTestClient
                 .patch()
-                .uri("/api/v1/usuarios/101")
+                .uri("/api/v1/usuarios/100")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("000000", "123456", "123456"))
                 .exchange()
@@ -346,6 +351,7 @@ public class UsuarioIT {
         List<UsuarioResponseDTO> responseBody = webTestClient
                 .get()
                 .uri("/api/v1/usuarios")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(UsuarioResponseDTO.class)
@@ -353,5 +359,20 @@ public class UsuarioIT {
 
         assertThat(responseBody).isNotNull();
         assertThat(responseBody.size()).isEqualTo(3);
+    }
+
+    @Test
+    public void erroAoRecupararTodosUsuariosComUsuarioSemPermissao_ComStatus403() {
+        ErrorMessage responseBody = webTestClient
+                .get()
+                .uri("/api/v1/usuarios")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test2@mail.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatus()).isEqualTo(403);
     }
 }
