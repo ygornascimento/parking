@@ -189,10 +189,26 @@ public class UsuarioIT {
     }
 
     @Test
-    public void createUsuario_ComIdExistente_RetornarErrorMessage_ComStatus404() {
+    public void buscarUsuario_ComUsuarioClienteBuscandoOutroCliente_RetornarErrorMessage_ComStatus403() {
+        ErrorMessage responseBody = webTestClient
+                .get()
+                .uri("/api/v1/usuarios/102")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test2@mail.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatus()).isEqualTo(403);
+    }
+
+    @Test
+    public void buscarUsuario_ComIdExistente_RetornarErrorMessage_ComStatus404() {
         ErrorMessage responseBody = webTestClient
                 .get()
                 .uri("/api/v1/usuarios/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody(ErrorMessage.class)
