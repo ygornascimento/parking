@@ -1,5 +1,6 @@
 package com.mballem.demoparkapi.web.exception;
 
+import com.mballem.demoparkapi.exception.CpfUniqueViolationException;
 import com.mballem.demoparkapi.exception.EntityNotFoundException;
 import com.mballem.demoparkapi.exception.PasswordInvalidException;
 import com.mballem.demoparkapi.exception.UsernameUniqueViolationException;
@@ -18,10 +19,11 @@ import org.springframework.security.access.AccessDeniedException;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
-    @ExceptionHandler(UsernameUniqueViolationException.class)
-    public ResponseEntity<ErrorMessage> methodArgumentNotValidException(RuntimeException exception,
+    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class})
+    public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException exception,
                                                                         HttpServletRequest request) {
 
         log.error("Api Error - ", exception);

@@ -7,9 +7,6 @@ import lombok.*;
 import org.modelmapper.ModelMapper;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor
-@Getter
-@Setter
 public class ClienteMapper {
     public static Cliente toCliente(ClienteCreateDTO dto) {
         return new ModelMapper().map(dto, Cliente.class);
