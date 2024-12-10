@@ -115,4 +115,19 @@ public class ClienteIT {
         assertThat(responseBody).isNotNull();
         assertThat(responseBody.getStatus()).isEqualTo(403);
     }
+
+    @Test
+    public void buscarCliente_ComIdExistente_PeloAdmin_RetornarCliente_ComStatus_200() {
+        ClienteResponseDTO responseBody = webTestClient
+                .get()
+                .uri("/api/v1/clientes/10")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ClienteResponseDTO.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getId()).isEqualTo(10);
+    }
 }
