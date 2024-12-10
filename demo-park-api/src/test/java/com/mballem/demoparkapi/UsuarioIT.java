@@ -132,7 +132,7 @@ public class UsuarioIT {
                 .post()
                 .uri("/api/v1/usuarios")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(new UsuarioCreateDTO("test1@mail.com", "123456"))
+                .bodyValue(new UsuarioCreateDTO("ana@email.com", "123456"))
                 .exchange()
                 .expectStatus().isEqualTo(409)
                 .expectBody(ErrorMessage.class)
@@ -147,7 +147,7 @@ public class UsuarioIT {
         UsuarioResponseDTO responseBody = webTestClient
                 .get()
                 .uri("/api/v1/usuarios/100")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(UsuarioResponseDTO.class)
@@ -155,13 +155,13 @@ public class UsuarioIT {
 
         assertThat(responseBody).isNotNull();
         assertThat(responseBody.getId()).isEqualTo(100);
-        assertThat(responseBody.getUsername()).isEqualTo("test1@mail.com");
+        assertThat(responseBody.getUsername()).isEqualTo("ana@email.com");
         assertThat(responseBody.getRole()).isEqualTo("ADMIN");
 
         responseBody = webTestClient
                 .get()
                 .uri("/api/v1/usuarios/101")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(UsuarioResponseDTO.class)
@@ -169,13 +169,13 @@ public class UsuarioIT {
 
         assertThat(responseBody).isNotNull();
         assertThat(responseBody.getId()).isEqualTo(101);
-        assertThat(responseBody.getUsername()).isEqualTo("test2@mail.com");
+        assertThat(responseBody.getUsername()).isEqualTo("bia@email.com");
         assertThat(responseBody.getRole()).isEqualTo("CLIENTE");
 
         responseBody = webTestClient
                 .get()
                 .uri("/api/v1/usuarios/102")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test3@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bob@email.com", "123456"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(UsuarioResponseDTO.class)
@@ -183,7 +183,7 @@ public class UsuarioIT {
 
         assertThat(responseBody).isNotNull();
         assertThat(responseBody.getId()).isEqualTo(102);
-        assertThat(responseBody.getUsername()).isEqualTo("test3@mail.com");
+        assertThat(responseBody.getUsername()).isEqualTo("bob@email.com");
         assertThat(responseBody.getRole()).isEqualTo("CLIENTE");
     }
 
@@ -192,7 +192,7 @@ public class UsuarioIT {
         ErrorMessage responseBody = webTestClient
                 .get()
                 .uri("/api/v1/usuarios/102")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test2@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectBody(ErrorMessage.class)
@@ -207,7 +207,7 @@ public class UsuarioIT {
         ErrorMessage responseBody = webTestClient
                 .get()
                 .uri("/api/v1/usuarios/0")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody(ErrorMessage.class)
@@ -222,7 +222,7 @@ public class UsuarioIT {
         webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/100")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("123456", "101010", "101010"))
                 .exchange()
@@ -231,7 +231,7 @@ public class UsuarioIT {
         webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/101")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test2@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("123456", "101010", "101010"))
                 .exchange()
@@ -243,7 +243,7 @@ public class UsuarioIT {
         ErrorMessage responseBody = webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/0")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("123456", "101010", "101010"))
                 .exchange()
@@ -257,7 +257,7 @@ public class UsuarioIT {
         responseBody = webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/0")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test2@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("123456", "101010", "101010"))
                 .exchange()
@@ -274,7 +274,7 @@ public class UsuarioIT {
         ErrorMessage responseBody = webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/101")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("", "", ""))
                 .exchange()
@@ -288,7 +288,7 @@ public class UsuarioIT {
         responseBody = webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/101")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("12345", "12345", "12345"))
                 .exchange()
@@ -302,7 +302,7 @@ public class UsuarioIT {
         responseBody = webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/101")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("1234567", "1234567", "1234567"))
                 .exchange()
@@ -319,7 +319,7 @@ public class UsuarioIT {
         ErrorMessage responseBody = webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/100")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("123456", "123456", "000000"))
                 .exchange()
@@ -333,7 +333,7 @@ public class UsuarioIT {
         responseBody = webTestClient
                 .patch()
                 .uri("/api/v1/usuarios/100")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioSenhaDTO("000000", "123456", "123456"))
                 .exchange()
@@ -350,7 +350,7 @@ public class UsuarioIT {
         List<UsuarioResponseDTO> responseBody = webTestClient
                 .get()
                 .uri("/api/v1/usuarios")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test1@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(UsuarioResponseDTO.class)
@@ -365,7 +365,7 @@ public class UsuarioIT {
         ErrorMessage responseBody = webTestClient
                 .get()
                 .uri("/api/v1/usuarios")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "test2@mail.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
                 .exchange()
                 .expectStatus().isForbidden()
                 .expectBody(ErrorMessage.class)

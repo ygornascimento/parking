@@ -6,7 +6,13 @@ import com.mballem.demoparkapi.service.ClienteService;
 import com.mballem.demoparkapi.service.UsuarioService;
 import com.mballem.demoparkapi.web.dto.ClienteCreateDTO;
 import com.mballem.demoparkapi.web.dto.ClienteResponseDTO;
+import com.mballem.demoparkapi.web.dto.UsuarioResponseDTO;
 import com.mballem.demoparkapi.web.dto.mapper.ClienteMapper;
+import com.mballem.demoparkapi.web.exception.ErrorMessage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +31,28 @@ public class ClienteController {
     private final ClienteService clienteService;
     private final UsuarioService usuarioService;
 
+    @Operation(summary = "Cria um novo cliente.",
+            description = "Recurso para criar um novo cliente vinculado ao um usuário cadastrado. " +
+            "Requisição exige uso de um Bearer Token. Acesso restrito a Role \"CLIENTE\" ",
+            responses = {
+                    @ApiResponse(responseCode = "201",
+                            description = "Recurso criado com sucesso.",
+                            content = @Content(mediaType = "application/json;charset=UTF=8",
+                                    schema = @Schema(implementation = ClienteResponseDTO.class))),
+                    @ApiResponse(responseCode = "409",
+                            description = "Cliente CPF já cadastrado no sistema.",
+                            content = @Content(mediaType = "application/json;charset=UTF=8",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "422",
+                            description = "Recurso não processado por falta dados de entrada inválidos.",
+                            content = @Content(mediaType = "application/json;charset=UTF=8",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403",
+                            description = "Acesso não permitido ao perfil ADMIN.",
+                            content = @Content(mediaType = "application/json;charset=UTF=8",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            }
+    )
     @PostMapping
     @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<ClienteResponseDTO> create(@RequestBody @Valid ClienteCreateDTO dto, @AuthenticationPrincipal JwtUserDetails userDetails) {
