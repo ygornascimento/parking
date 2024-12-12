@@ -8,6 +8,8 @@ import com.mballem.demoparkapi.web.dto.UsuarioSenhaDTO;
 import com.mballem.demoparkapi.web.dto.mapper.UsuarioMapper;
 import com.mballem.demoparkapi.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +23,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
 @Tag(name = "Usuarios", description = "Contém todas as informações necessárias...")
 @RequiredArgsConstructor
