@@ -1,6 +1,7 @@
 package com.mballem.demoparkapi;
 import com.mballem.demoparkapi.web.dto.ClienteCreateDTO;
 import com.mballem.demoparkapi.web.dto.ClienteResponseDTO;
+import com.mballem.demoparkapi.web.dto.PageableDTO;
 import com.mballem.demoparkapi.web.exception.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,6 +152,52 @@ public class ClienteIT {
         ErrorMessage responseBody = webTestClient
                 .get()
                 .uri("/api/v1/clientes/20")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatus()).isEqualTo(403);
+    }
+
+    @Test
+    public void buscarClientes_ComComPaginacao_PeloAdmin_RetornarClientes_ComStatus_200() {
+        PageableDTO responseBody = webTestClient
+                .get()
+                .uri("/api/v1/clientes")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PageableDTO.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getContent().size()).isEqualTo(2);
+        assertThat(responseBody.getNumber()).isEqualTo(0);
+        assertThat(responseBody.getTotalPages()).isEqualTo(1);
+
+        responseBody = webTestClient
+                .get()
+                .uri("/api/v1/clientes?size=1&page=1")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PageableDTO.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getContent().size()).isEqualTo(1);
+        assertThat(responseBody.getNumber()).isEqualTo(1);
+        assertThat(responseBody.getTotalPages()).isEqualTo(2);
+    }
+
+    @Test
+    public void buscarClientes_ComComPaginacao_PeloAdmin_RetornarClientes_ComStatus_403() {
+        ErrorMessage responseBody = webTestClient
+                .get()
+                .uri("/api/v1/clientes")
                 .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
                 .exchange()
                 .expectStatus().isForbidden()
