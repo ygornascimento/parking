@@ -1,9 +1,6 @@
 package com.mballem.demoparkapi.web.exception;
 
-import com.mballem.demoparkapi.exception.CpfUniqueViolationException;
-import com.mballem.demoparkapi.exception.EntityNotFoundException;
-import com.mballem.demoparkapi.exception.PasswordInvalidException;
-import com.mballem.demoparkapi.exception.UsernameUniqueViolationException;
+import com.mballem.demoparkapi.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +19,9 @@ public class ApiExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
-    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class})
+    @ExceptionHandler({UsernameUniqueViolationException.class,
+                        CpfUniqueViolationException.class,
+                        CodigoUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException exception,
                                                                         HttpServletRequest request) {
 
