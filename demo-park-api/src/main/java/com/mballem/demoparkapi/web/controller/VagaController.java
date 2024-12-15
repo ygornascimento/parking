@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -26,11 +27,13 @@ import java.net.URI;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/vagas")
+@Tag(name = "Vaga", description = "Contém todas as informações necessárias referente ao recurso vaga.")
 public class VagaController {
     private final VagaService vagaService;
 
     @Operation(summary = "Cria uma nova vaga.",
             description = "Recurso para criar uma nova vaga.",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "201",
                             description = "Recurso criado com sucesso.",
@@ -63,6 +66,7 @@ public class VagaController {
 
     @Operation(summary = "Localizar uma vaga.",
             description = "Recurso para retornar uma nova vaga pelo seu código.",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200",
                             description = "Recurso localizado com sucesso.",

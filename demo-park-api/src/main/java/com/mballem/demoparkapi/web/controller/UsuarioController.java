@@ -26,10 +26,11 @@ import java.util.List;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
-@Tag(name = "Usuarios", description = "Contém todas as informações necessárias...")
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/usuarios")
+@Tag(name = "Usuario", description = "Contém todas as informações necessárias referente ao recurso de usuários.")
 public class UsuarioController {
     private final UsuarioService usuarioService;
 
