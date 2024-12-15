@@ -29,4 +29,52 @@ public class VagaIT {
                 .expectStatus().isCreated()
                 .expectHeader().exists(HttpHeaders.LOCATION);
     }
+
+    @Test
+    public void criarVaga_ComCodigoExistente_RetornarErrorMessage_Status409() {
+        webTestClient
+                .post()
+                .uri("/api/v1/vagas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .bodyValue(new VagaCreateDTO("A-01", "LIVRE"))
+                .exchange()
+                .expectStatus().isEqualTo(409)
+                .expectBody()
+                .jsonPath("status").isEqualTo("409")
+                .jsonPath("method").isEqualTo("POST")
+                .jsonPath("path").isEqualTo("/api/v1/vagas");
+
+    }
+
+    @Test
+    public void criarVaga_ComDadosInvalidos_RetornarErrorMessage_Status422() {
+        webTestClient
+                .post()
+                .uri("/api/v1/vagas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .bodyValue(new VagaCreateDTO("", ""))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody()
+                .jsonPath("status").isEqualTo("422")
+                .jsonPath("method").isEqualTo("POST")
+                .jsonPath("path").isEqualTo("/api/v1/vagas");
+
+
+        webTestClient
+                .post()
+                .uri("/api/v1/vagas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .bodyValue(new VagaCreateDTO("A-501", "DESOCUPADA"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody()
+                .jsonPath("status").isEqualTo("422")
+                .jsonPath("method").isEqualTo("POST")
+                .jsonPath("path").isEqualTo("/api/v1/vagas");
+
+    }
 }
