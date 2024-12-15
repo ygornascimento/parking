@@ -77,4 +77,34 @@ public class VagaIT {
                 .jsonPath("path").isEqualTo("/api/v1/vagas");
 
     }
+
+    @Test
+    public void buscarVaga_ComCodigoExistente_RetornarVaaga_Status200() {
+        webTestClient
+                .get()
+                .uri("/api/v1/vagas/{codigo}", "A-01")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("id").isEqualTo(10)
+                .jsonPath("codigo").isEqualTo("A-01")
+                .jsonPath("status").isEqualTo("LIVRE");
+
+    }
+
+    @Test
+    public void buscarVaga_ComCodigoInexistente_RetornarErrorMessage_Status404() {
+        webTestClient
+                .get()
+                .uri("/api/v1/vagas/{codigo}", "A-10")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo("404")
+                .jsonPath("method").isEqualTo("GET")
+                .jsonPath("path").isEqualTo("/api/v1/vagas/A-10");
+
+    }
 }
