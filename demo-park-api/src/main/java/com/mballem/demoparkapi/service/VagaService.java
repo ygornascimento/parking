@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import static com.mballem.demoparkapi.entity.Vaga.StatusVaga.LIVRE;
+
 @Service
 @RequiredArgsConstructor
 public class VagaService {
@@ -28,6 +30,13 @@ public class VagaService {
     public Vaga buscarPorCodigo(String codigo) {
         return vagaRepository.findByCodigo(codigo).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Vaga com código %s não foi encontrada", codigo))
+        );
+    }
+
+    @Transactional
+    public Vaga buscarPorVagaLivre() {
+        return vagaRepository.findFirstByStatus(LIVRE).orElseThrow(
+                () -> new EntityNotFoundException("Nenhuma vaga livre foi encontrada.")
         );
     }
 }
