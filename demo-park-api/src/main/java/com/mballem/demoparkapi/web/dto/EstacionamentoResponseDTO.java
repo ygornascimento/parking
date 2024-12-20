@@ -1,5 +1,7 @@
 package com.mballem.demoparkapi.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EstacionamentoResponseDTO {
     private String placa;
     private String marca;
@@ -22,7 +25,9 @@ public class EstacionamentoResponseDTO {
     private String cor;
     private String clienteCpf;
     private String recibo;
+    @JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
     private LocalDateTime dataEntrada;
+    @JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
     private LocalDateTime dataSaida;
     private String vagaCodigo;
     private BigDecimal valor;
