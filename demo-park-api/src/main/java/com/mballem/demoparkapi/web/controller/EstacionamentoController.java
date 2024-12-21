@@ -1,6 +1,6 @@
 package com.mballem.demoparkapi.web.controller;
-
 import com.mballem.demoparkapi.entity.ClienteVaga;
+import com.mballem.demoparkapi.service.ClienteVagaService;
 import com.mballem.demoparkapi.service.EstacionamentoService;
 import com.mballem.demoparkapi.web.dto.EstacionamentoCreateDTO;
 import com.mballem.demoparkapi.web.dto.EstacionamentoResponseDTO;
@@ -18,10 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -32,6 +29,7 @@ import java.net.URI;
 @Tag(name = "Estacionamento", description = "Contém todas as informações necessárias referente ao recurso de estacionamento.")
 public class EstacionamentoController {
     private final EstacionamentoService estacionamentoService;
+    private final ClienteVagaService clienteVagaService;
 
 
     @Operation(summary = "Operação de Check-In.",
@@ -68,5 +66,13 @@ public class EstacionamentoController {
                 .buildAndExpand(clienteVaga.getRecibo())
                 .toUri();
         return ResponseEntity.created(location).body(responseDTO);
+    }
+
+    @GetMapping("/checkin/{recibo}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
+    public ResponseEntity<EstacionamentoResponseDTO> getByRecibo(@PathVariable String recibo) {
+        ClienteVaga clienteVaga = clienteVagaService.buscarPorRecibo(recibo);
+        EstacionamentoResponseDTO dto = ClienteVagaMapper.toDto(clienteVaga);
+        return ResponseEntity.ok(dto);
     }
 }
