@@ -113,7 +113,7 @@ public class EstacionamentoIT {
     @Test
     @Sql(scripts = "/SQL/estacionamentos/estacionamento-insert-vagas-ocupadas.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/SQL/estacionamentos/estacionamento-delete-vagas-ocupadas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void criarCheckIn_ComCVagasOcupadas_RetornarError_Status404() {
+    public void criarCheckIn_ComVagasOcupadas_RetornarError_Status404() {
         EstacionamentoCreateDTO createDTO = EstacionamentoCreateDTO.builder()
                 .placa("WER-1111")
                 .marca("FIAT")
@@ -132,5 +132,54 @@ public class EstacionamentoIT {
                 .jsonPath("status").isEqualTo("404")
                 .jsonPath("path").isEqualTo("/api/v1/estacionamentos/checkin")
                 .jsonPath("method").isEqualTo("POST");
+    }
+
+    @Test
+    public void buscarCheckIn_ComPerfilAdmin_Retornar_Status200() {
+
+        webTestClient.get().uri("/api/v1/estacionamentos/checkin/{recibo}", "20230313-101300")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("placa").isEqualTo("FIT-1020")
+                .jsonPath("marca").isEqualTo("FIAT")
+                .jsonPath("modelo").isEqualTo("PALIO")
+                .jsonPath("cor").isEqualTo("VERDE")
+                .jsonPath("clienteCpf").isEqualTo("98401203015")
+                .jsonPath("recibo").isEqualTo("20230313-101300")
+                .jsonPath("dataEntrada").isEqualTo("2023-03-13 10:15:00")
+                .jsonPath("vagaCodigo").isEqualTo("A-01");
+    }
+
+    @Test
+    public void buscarCheckIn_ComPerfilCliente_Retornar_Status200() {
+
+        webTestClient.get().uri("/api/v1/estacionamentos/checkin/{recibo}", "20230313-101300")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bob@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("placa").isEqualTo("FIT-1020")
+                .jsonPath("marca").isEqualTo("FIAT")
+                .jsonPath("modelo").isEqualTo("PALIO")
+                .jsonPath("cor").isEqualTo("VERDE")
+                .jsonPath("clienteCpf").isEqualTo("98401203015")
+                .jsonPath("recibo").isEqualTo("20230313-101300")
+                .jsonPath("dataEntrada").isEqualTo("2023-03-13 10:15:00")
+                .jsonPath("vagaCodigo").isEqualTo("A-01");
+    }
+
+    @Test
+    public void buscarCheckIn_ComReciboInexistente_RetornarError_Status404() {
+
+        webTestClient.get().uri("/api/v1/estacionamentos/checkin/{recibo}", "20230313-000000")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bob@email.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo("404")
+                .jsonPath("path").isEqualTo("/api/v1/estacionamentos/checkin/20230313-000000")
+                .jsonPath("method").isEqualTo("GET");
     }
 }
