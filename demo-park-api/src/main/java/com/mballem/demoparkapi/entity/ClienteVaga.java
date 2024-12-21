@@ -1,6 +1,6 @@
 package com.mballem.demoparkapi.entity;
-
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,30 +10,56 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor @AllArgsConstructor
 @Entity
-@Table(name = "usuarios")
+@Table(name = "cliente_tem_vagas")
 @EntityListeners(AuditingEntityListener.class)
-public class Usuario implements Serializable {
+public class ClienteVaga {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "username", nullable = false, unique = true, length = 100)
-    private String username;
+    @Column(name = "numero_recibo", nullable = false, unique = true, length = 15)
+    private String recibo;
 
-    @Column(name = "password", nullable = false, length = 200)
-    private String password;
+    @Column(name = "placa", nullable = false, length = 8)
+    private String placa;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, length = 25)
-    private Role role = Role.ROLE_CLIENTE;
+    @Column(name = "marca", nullable = false, length = 45)
+    private String marca;
+
+    @Column(name = "modelo", nullable = false, length = 45)
+    private String modelo;
+
+    @Column(name = "cor", nullable = false, length = 45)
+    private String cor;
+
+    @Column(name = "data_entrada", nullable = false)
+    private LocalDateTime dataEntrada;
+
+    @Column(name = "data_saida")
+    private LocalDateTime dataSaida;
+
+    @Column(name = "valor", columnDefinition = "decimal(7,2)")
+    private BigDecimal valor;
+
+    @Column(name = "desconto", columnDefinition = "decimal(7,2)")
+    private BigDecimal desconto;
+
+    @ManyToOne
+    @JoinColumn(name = "id_cliente", nullable = false)
+    private Cliente cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "id_vaga", nullable = false)
+    private Vaga vaga;
 
     @CreatedDate
     @Column(name = "data_criacao")
@@ -51,27 +77,16 @@ public class Usuario implements Serializable {
     @Column(name = "modificado_por")
     private String modificadoPor;
 
-    public enum Role {
-        ROLE_ADMIN, ROLE_CLIENTE
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Usuario usuario = (Usuario) o;
-        return Objects.equals(id, usuario.id);
+        ClienteVaga that = (ClienteVaga) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Usuario{" +
-                "id=" + id +
-                '}';
     }
 }
