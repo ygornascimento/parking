@@ -87,4 +87,50 @@ public class EstacionamentoIT {
                 .jsonPath("path").isEqualTo("/api/v1/estacionamentos/checkin")
                 .jsonPath("method").isEqualTo("POST");
     }
+
+    @Test
+    public void criarCheckIn_ComCPFInexistente_RetornarError_Status404() {
+        EstacionamentoCreateDTO createDTO = EstacionamentoCreateDTO.builder()
+                .placa("WER-1111")
+                .marca("FIAT")
+                .modelo("PALIO 1.0")
+                .cor("AZUL")
+                .clienteCpf("24044093016")
+                .build();
+
+        webTestClient.post().uri("/api/v1/estacionamentos/checkin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .bodyValue(createDTO)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo("404")
+                .jsonPath("path").isEqualTo("/api/v1/estacionamentos/checkin")
+                .jsonPath("method").isEqualTo("POST");
+    }
+
+    @Test
+    @Sql(scripts = "/SQL/estacionamentos/estacionamento-insert-vagas-ocupadas.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/SQL/estacionamentos/estacionamento-delete-vagas-ocupadas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void criarCheckIn_ComCVagasOcupadas_RetornarError_Status404() {
+        EstacionamentoCreateDTO createDTO = EstacionamentoCreateDTO.builder()
+                .placa("WER-1111")
+                .marca("FIAT")
+                .modelo("PALIO 1.0")
+                .cor("AZUL")
+                .clienteCpf("03656968039")
+                .build();
+
+        webTestClient.post().uri("/api/v1/estacionamentos/checkin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .bodyValue(createDTO)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo("404")
+                .jsonPath("path").isEqualTo("/api/v1/estacionamentos/checkin")
+                .jsonPath("method").isEqualTo("POST");
+    }
 }
