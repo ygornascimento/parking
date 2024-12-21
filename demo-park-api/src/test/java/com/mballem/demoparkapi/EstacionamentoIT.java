@@ -43,4 +43,48 @@ public class EstacionamentoIT {
                 .jsonPath("dataEntrada").exists()
                 .jsonPath("vagaCodigo").exists();
     }
+
+    @Test
+    public void criarCheckIn_ComRoleCliente_RetornarError_Status403() {
+        EstacionamentoCreateDTO createDTO = EstacionamentoCreateDTO.builder()
+                .placa("WER-1111")
+                .marca("FIAT")
+                .modelo("PALIO 1.0")
+                .cor("AZUL")
+                .clienteCpf("03656968039")
+                .build();
+
+        webTestClient.post().uri("/api/v1/estacionamentos/checkin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
+                .bodyValue(createDTO)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("status").isEqualTo("403")
+                .jsonPath("path").isEqualTo("/api/v1/estacionamentos/checkin")
+                .jsonPath("method").isEqualTo("POST");
+    }
+
+    @Test
+    public void criarCheckIn_ComDadosInvalidos_RetornarError_Status422() {
+        EstacionamentoCreateDTO createDTO = EstacionamentoCreateDTO.builder()
+                .placa("")
+                .marca("")
+                .modelo("")
+                .cor("")
+                .clienteCpf("")
+                .build();
+
+        webTestClient.post().uri("/api/v1/estacionamentos/checkin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
+                .bodyValue(createDTO)
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody()
+                .jsonPath("status").isEqualTo("422")
+                .jsonPath("path").isEqualTo("/api/v1/estacionamentos/checkin")
+                .jsonPath("method").isEqualTo("POST");
+    }
 }
