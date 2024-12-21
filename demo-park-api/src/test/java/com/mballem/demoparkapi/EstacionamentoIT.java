@@ -23,12 +23,12 @@ public class EstacionamentoIT {
                 .marca("FIAT")
                 .modelo("PALIO 1.0")
                 .cor("AZUL")
-                .clienteCpf("03656968039")
+                .clienteCpf("98401203015")
                 .build();
 
         webTestClient.post().uri("/api/v1/estacionamentos/checkin")
                 .contentType(MediaType.APPLICATION_JSON)
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com.br", "123456"))
                 .bodyValue(createDTO)
                 .exchange()
                 .expectStatus().isCreated()
@@ -38,7 +38,7 @@ public class EstacionamentoIT {
                 .jsonPath("marca").isEqualTo("FIAT")
                 .jsonPath("modelo").isEqualTo("PALIO 1.0")
                 .jsonPath("cor").isEqualTo("AZUL")
-                .jsonPath("clienteCpf").isEqualTo("03656968039")
+                .jsonPath("clienteCpf").isEqualTo("98401203015")
                 .jsonPath("recibo").exists()
                 .jsonPath("dataEntrada").exists()
                 .jsonPath("vagaCodigo").exists();
@@ -51,12 +51,12 @@ public class EstacionamentoIT {
                 .marca("FIAT")
                 .modelo("PALIO 1.0")
                 .cor("AZUL")
-                .clienteCpf("03656968039")
+                .clienteCpf("98401203015")
                 .build();
 
         webTestClient.post().uri("/api/v1/estacionamentos/checkin")
                 .contentType(MediaType.APPLICATION_JSON)
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com.br", "123456"))
                 .bodyValue(createDTO)
                 .exchange()
                 .expectStatus().isForbidden()
@@ -78,7 +78,7 @@ public class EstacionamentoIT {
 
         webTestClient.post().uri("/api/v1/estacionamentos/checkin")
                 .contentType(MediaType.APPLICATION_JSON)
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com.br", "123456"))
                 .bodyValue(createDTO)
                 .exchange()
                 .expectStatus().isEqualTo(422)
@@ -95,12 +95,12 @@ public class EstacionamentoIT {
                 .marca("FIAT")
                 .modelo("PALIO 1.0")
                 .cor("AZUL")
-                .clienteCpf("24044093016")
+                .clienteCpf("73287837028")
                 .build();
 
         webTestClient.post().uri("/api/v1/estacionamentos/checkin")
                 .contentType(MediaType.APPLICATION_JSON)
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com.br", "123456"))
                 .bodyValue(createDTO)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -119,12 +119,12 @@ public class EstacionamentoIT {
                 .marca("FIAT")
                 .modelo("PALIO 1.0")
                 .cor("AZUL")
-                .clienteCpf("03656968039")
+                .clienteCpf("98401203015")
                 .build();
 
         webTestClient.post().uri("/api/v1/estacionamentos/checkin")
                 .contentType(MediaType.APPLICATION_JSON)
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com.br", "123456"))
                 .bodyValue(createDTO)
                 .exchange()
                 .expectStatus().isNotFound()
@@ -138,7 +138,7 @@ public class EstacionamentoIT {
     public void buscarCheckIn_ComPerfilAdmin_Retornar_Status200() {
 
         webTestClient.get().uri("/api/v1/estacionamentos/checkin/{recibo}", "20230313-101300")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com.br", "123456"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -156,7 +156,7 @@ public class EstacionamentoIT {
     public void buscarCheckIn_ComPerfilCliente_Retornar_Status200() {
 
         webTestClient.get().uri("/api/v1/estacionamentos/checkin/{recibo}", "20230313-101300")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bob@email.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bob@email.com.br", "123456"))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -174,7 +174,7 @@ public class EstacionamentoIT {
     public void buscarCheckIn_ComReciboInexistente_RetornarError_Status404() {
 
         webTestClient.get().uri("/api/v1/estacionamentos/checkin/{recibo}", "20230313-000000")
-                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bob@email.com", "123456"))
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bob@email.com.br", "123456"))
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody()
