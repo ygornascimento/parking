@@ -1,5 +1,6 @@
 package com.mballem.demoparkapi.web.controller;
 import com.mballem.demoparkapi.entity.ClienteVaga;
+import com.mballem.demoparkapi.jwt.JwtUserDetails;
 import com.mballem.demoparkapi.repository.projection.ClienteProjection;
 import com.mballem.demoparkapi.service.ClienteVagaService;
 import com.mballem.demoparkapi.service.EstacionamentoService;
@@ -28,6 +29,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -163,6 +165,18 @@ public class EstacionamentoController {
                                                                    direction =Sort.Direction.ASC) Pageable pageable) {
 
         Page<ClienteProjection> projection = clienteVagaService.buscarTodosPorClienteCpf(cpf, pageable);
+        PageableDTO dto = PageableMapper.toDTO(projection);
+        return ResponseEntity.ok(dto);
+
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<PageableDTO> getAllEstacionamentosDoCliente(@AuthenticationPrincipal JwtUserDetails user,
+                                                                   @PageableDefault(size = 5, sort = "dataEntrada",
+                                                                           direction =Sort.Direction.ASC) Pageable pageable) {
+
+        Page<ClienteProjection> projection = clienteVagaService.buscarTodosPorUsuarioId(user.getId(), pageable);
         PageableDTO dto = PageableMapper.toDTO(projection);
         return ResponseEntity.ok(dto);
 
