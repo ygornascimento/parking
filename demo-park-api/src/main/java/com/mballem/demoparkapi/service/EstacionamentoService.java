@@ -14,9 +14,7 @@ import java.time.LocalDateTime;
 @Service
 public class EstacionamentoService {
 
-    private final ClienteService CLIENTESERVICE;
     private final ClienteVagaService clienteVagaService;
-    private final VagaService VAGASERVICE;
     private final ClienteService clienteService;
     private final VagaService vagaService;
 
