@@ -76,4 +76,18 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, exception.getMessage()));
 
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorMessage> internalServerErrorException(Exception exception,
+                                                              HttpServletRequest request) {
+
+        ErrorMessage errorMessage = new ErrorMessage(request, HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+
+        log.error("Internal Server Error {} {} ", exception);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorMessage);
+
+    }
 }
