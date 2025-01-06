@@ -78,16 +78,13 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorMessage> internalServerErrorException(Exception exception,
-                                                              HttpServletRequest request) {
-
-        ErrorMessage errorMessage = new ErrorMessage(request, HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
-
-        log.error("Internal Server Error {} {} ", exception);
+    public ResponseEntity<ErrorMessage> internalServerErrorException(Exception ex, HttpServletRequest request) {
+        ErrorMessage error = new ErrorMessage(
+                request, HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        log.error("Internal Server Error {} {} ", error, ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errorMessage);
-
+                .body(error);
     }
 }
