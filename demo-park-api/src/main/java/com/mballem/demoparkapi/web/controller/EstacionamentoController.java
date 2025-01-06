@@ -2,8 +2,10 @@ package com.mballem.demoparkapi.web.controller;
 import com.mballem.demoparkapi.entity.ClienteVaga;
 import com.mballem.demoparkapi.jwt.JwtUserDetails;
 import com.mballem.demoparkapi.repository.projection.ClienteProjection;
+import com.mballem.demoparkapi.service.ClienteService;
 import com.mballem.demoparkapi.service.ClienteVagaService;
 import com.mballem.demoparkapi.service.EstacionamentoService;
+import com.mballem.demoparkapi.service.JasperService;
 import com.mballem.demoparkapi.web.dto.EstacionamentoCreateDTO;
 import com.mballem.demoparkapi.web.dto.EstacionamentoResponseDTO;
 import com.mballem.demoparkapi.web.dto.PageableDTO;
@@ -20,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,12 +30,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 
 import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.PATH;
@@ -44,6 +49,8 @@ import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.P
 public class EstacionamentoController {
     private final EstacionamentoService estacionamentoService;
     private final ClienteVagaService clienteVagaService;
+    private final ClienteService clienteService;
+    private final JasperService jasperService;
 
 
     @Operation(summary = "Operação de Check-In.",
@@ -205,5 +212,20 @@ public class EstacionamentoController {
         PageableDTO dto = PageableMapper.toDTO(projection);
         return ResponseEntity.ok(dto);
 
+    }
+
+    @GetMapping("/relatorio")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<PageableDTO> getRelatorio(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user) throws IOException {
+        String cpf = clienteService.buscarPorUsuarioId(user.getId()).getCpf();
+        jasperService.addParams("CPF", cpf);
+
+        byte[] bytes = jasperService.gerarPdf();
+
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+        response.setHeader("Content-Disposition", "inline; filename=" + System.currentTimeMillis() +  ".pdf");
+        response.getOutputStream().write(bytes);
+
+        return ResponseEntity.ok().build();
     }
 }
